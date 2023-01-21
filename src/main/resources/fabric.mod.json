@@ -1,29 +1,42 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
+  "id": "perkmastery",
   "version": "${version}",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "PerkMastery",
+  "description": "Level up your class skills through XP",
   "authors": [
-    "Me!"
+    {
+      "name": "zabi94",
+      "contact": {
+      	"twitter": "https://twitter.com/zabi94",
+      	"discord": "https://discord.gg/njMA9kv"
+      }
+    }
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://github.com/zabi94/PerkMastery",
+    "sources": "https://github.com/zabi94/PerkMastery",
+    "issues": "https://github.com/zabi94/PerkMastery/issues"
   },
 
-  "license": "CC0-1.0",
-  "icon": "assets/modid/icon.png",
+  "license": "ARR",
+  "icon": "assets/perkmastery/icon.png",
 
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "dev.zabi94.perkmastery.PerkMastery"
+    ],
+    "client": [
+      "dev.zabi94.perkmastery.client.PerkMasteryClient"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    {
+      "config": "perkmastery.common.json",
+      "environment": "*"
+    }
   ],
 
   "depends": {
@@ -31,8 +44,5 @@
     "fabric-api": "*",
     "minecraft": "~1.19.3",
     "java": ">=17"
-  },
-  "suggests": {
-    "another-mod": "*"
   }
 }
