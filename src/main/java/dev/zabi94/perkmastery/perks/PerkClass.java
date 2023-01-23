@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import dev.zabi94.perkmastery.entity.player.PlayerPerkData;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
@@ -18,8 +20,12 @@ public class PerkClass {
 		this.formatting = formatting;
 	}
 	
-	public Text getText() {
-		return Text.translatable(this.getID().toTranslationKey("perkclass")).formatted(formatting);
+	public MutableText getText() {
+		return Text.translatable(this.getID().toTranslationKey("perkclass.title")).formatted(formatting);
+	}
+
+	public MutableText getDescription() {
+		return Text.translatable(this.getID().toTranslationKey("perkclass.description"));
 	}
 	
 	PerkClass addLevel(PerkLevel level) {
@@ -37,11 +43,11 @@ public class PerkClass {
 	}
 	
 	public boolean isLocked(PlayerEntity player) {
-		return false;
+		return PlayerPerkData.of(player).getPerkClasses().size() > 0;
 	}
 	
 	public boolean isPurchased(PlayerEntity player) {
-		return false;
+		return PlayerPerkData.of(player).isClassPurchased(this);
 	}
 	
 	public Identifier getID() {

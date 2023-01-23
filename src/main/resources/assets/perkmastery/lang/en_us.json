@@ -1,8 +1,20 @@
 {
-	"perkclass.perkmastery.enchanter": "Enchanter",
-	"perkclass.perkmastery.warrior": "Warrior",
-	"perkclass.perkmastery.rogue": "Rogue",
-	"perkclass.perkmastery.explorer": "Explorer",
-	"perkclass.perkmastery.builder": "Builder",
-	"perkclass.perkmastery.miner": "Miner"
+	"perkmastery.unlock_class.message": "Unlock this class",
+	"perkmastery.unlock_class.cost": "Cost: %s XP levels",
+
+	"perkclass.title.perkmastery.enchanter": "Enchanter",
+	"perkclass.title.perkmastery.warrior": "Warrior",
+	"perkclass.title.perkmastery.rogue": "Rogue",
+	"perkclass.title.perkmastery.explorer": "Explorer",
+	"perkclass.title.perkmastery.builder": "Builder",
+	"perkclass.title.perkmastery.miner": "Miner",
+	"perkclass.description.perkmastery.enchanter": "Enchanter description",
+	"perkclass.description.perkmastery.warrior": "Warrior description",
+	"perkclass.description.perkmastery.rogue": "Rogue description",
+	"perkclass.description.perkmastery.explorer": "Explore descriptionr",
+	"perkclass.description.perkmastery.builder": "Builder description",
+	"perkclass.description.perkmastery.miner": "Miner description",
+	
+	"perklevel.title.perkmastery.disenchanting": "Disenchanting",
+	"perklevel.description.perkmastery.disenchanting": "Disenchanting description"
 }

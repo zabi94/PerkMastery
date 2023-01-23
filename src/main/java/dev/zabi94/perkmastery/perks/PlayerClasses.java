@@ -20,11 +20,11 @@ public class PlayerClasses {
 	public static final PerkClass EXPLORER = new PerkClass(Formatting.DARK_GREEN);	
 	public static final PerkClass BUILDER = new PerkClass(Formatting.BLUE);
 	public static final PerkClass MINER = new PerkClass(Formatting.AQUA);
-	public static final PerkClass TEST = new PerkClass(Formatting.RED);
-	public static final PerkClass TEST1 = new PerkClass(Formatting.RED);
-	public static final PerkClass TEST2 = new PerkClass(Formatting.RED);
-	public static final PerkClass TEST3 = new PerkClass(Formatting.RED);
-	public static final PerkClass TEST4 = new PerkClass(Formatting.RED);
+//	public static final PerkClass TEST = new PerkClass(Formatting.RED);
+//	public static final PerkClass TEST1 = new PerkClass(Formatting.RED);
+//	public static final PerkClass TEST2 = new PerkClass(Formatting.RED);
+//	public static final PerkClass TEST3 = new PerkClass(Formatting.RED);
+//	public static final PerkClass TEST4 = new PerkClass(Formatting.RED);
 	
 	public static void init() {
 		Registry.register(CLASSES_REGISTRY, LibMod.id("enchanter"), ENCHANTER);
@@ -33,11 +33,11 @@ public class PlayerClasses {
 		Registry.register(CLASSES_REGISTRY, LibMod.id("explorer"), EXPLORER);
 		Registry.register(CLASSES_REGISTRY, LibMod.id("builder"), BUILDER);
 		Registry.register(CLASSES_REGISTRY, LibMod.id("miner"), MINER);
-		Registry.register(CLASSES_REGISTRY, LibMod.id("test"), TEST);
-		Registry.register(CLASSES_REGISTRY, LibMod.id("test1"), TEST1);
-		Registry.register(CLASSES_REGISTRY, LibMod.id("test2"), TEST2);
-		Registry.register(CLASSES_REGISTRY, LibMod.id("test3"), TEST3);
-		Registry.register(CLASSES_REGISTRY, LibMod.id("test4"), TEST4);
+//		Registry.register(CLASSES_REGISTRY, LibMod.id("test"), TEST);
+//		Registry.register(CLASSES_REGISTRY, LibMod.id("test1"), TEST1);
+//		Registry.register(CLASSES_REGISTRY, LibMod.id("test2"), TEST2);
+//		Registry.register(CLASSES_REGISTRY, LibMod.id("test3"), TEST3);
+//		Registry.register(CLASSES_REGISTRY, LibMod.id("test4"), TEST4);
 	}
 	
 }

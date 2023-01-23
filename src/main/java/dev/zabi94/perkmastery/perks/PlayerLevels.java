@@ -16,6 +16,7 @@ public class PlayerLevels {
 	
 	public static void init() {
 		Registry.register(LEVELS_REGISTRY, LibMod.id("disenchanting"), new PerkLevel(PlayerClasses.ENCHANTER));
+		Registry.register(LEVELS_REGISTRY, LibMod.id("steady_hand"), new PerkLevel(PlayerClasses.ROGUE));
 	}
 	
 }

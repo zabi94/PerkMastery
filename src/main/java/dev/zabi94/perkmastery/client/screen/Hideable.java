@@ -4,4 +4,6 @@ public interface Hideable {
 
 	public void toggleHide();
 	
+	public void setVisible(boolean visible);
+	
 }

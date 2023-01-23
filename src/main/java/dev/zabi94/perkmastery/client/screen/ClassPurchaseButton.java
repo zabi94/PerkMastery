@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import dev.zabi94.perkmastery.entity.player.PlayerPerkData;
 import dev.zabi94.perkmastery.perks.PerkClass;
-import dev.zabi94.perkmastery.perks.PlayerClasses;
 import dev.zabi94.perkmastery.utils.LibMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
@@ -17,9 +17,11 @@ import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.OrderedText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
-public class ClassButton implements Element, Drawable, Selectable, Hideable, TooltipProvider {
+public class ClassPurchaseButton implements Element, Drawable, Selectable, Hideable, TooltipProvider {
 	
 	public static final int BACKGROUND_TEXTURE_SIZE = 26;
 	public static final int ICON_TEXTURE_SIZE = 18;
@@ -28,55 +30,44 @@ public class ClassButton implements Element, Drawable, Selectable, Hideable, Too
 	private static final float TEXTURE_U_UNAVAILABLE = 0;
 	private static final float TEXTURE_U_AVAILABLE = 26;
 	private static final float TEXTURE_U_HOVERED = 52;
-	private static final float TEXTURE_U_UNLOCKED = 78;
 	
 	private final int x, y;
-	private boolean hidden = false;
-	private final PerkClass perkClass;
+	private boolean hidden = true;
+	private PerkClass perkClass;
 			
-	public ClassButton(PerkClass perkClass, int classOrder) {
+	public ClassPurchaseButton() {
 		
-		this.perkClass = perkClass;
+		this.perkClass = null;
 		
 		MinecraftClient mc = MinecraftClient.getInstance();
 		int screenWidth = mc.getWindow().getScaledWidth();
 		int screenHeight = mc.getWindow().getScaledHeight();
 		
-		double halfClasses = PlayerClasses.CLASSES_REGISTRY.size() / 2d;
-		
-		int tlX = (int) (55 * Math.cos(classOrder/halfClasses*Math.PI - Math.PI/2));
-		int tlY = (int) (55 * Math.sin(classOrder/halfClasses*Math.PI - Math.PI/2));
-
-		this.x = (tlX - BACKGROUND_TEXTURE_SIZE/2) + (screenWidth / 2);
-		this.y = (tlY - BACKGROUND_TEXTURE_SIZE/2) + (screenHeight / 2);
+		this.x = (- BACKGROUND_TEXTURE_SIZE/2) + (screenWidth / 2);
+		this.y = (- BACKGROUND_TEXTURE_SIZE/2) + (screenHeight / 2);
 	}
 
 	@SuppressWarnings("resource")
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+		
+		PlayerEntity p = MinecraftClient.getInstance().player;
+		
 		if (hidden) return;
+		
         RenderSystem.setShaderTexture(0, LibMod.id("textures/gui/levelling/frame.png"));
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		
 		float texture_u = 0;
 		
-		PlayerEntity p = MinecraftClient.getInstance().player;
-		
-		switch (getState(p)) {
-			case AVAILABLE:
-				if (isMouseOver(mouseX, mouseY)) {
-					texture_u = TEXTURE_U_HOVERED;
-				} else {
-					texture_u = TEXTURE_U_AVAILABLE;
-				}
-				break;
-			case UNLOCKED:
-				texture_u = TEXTURE_U_UNLOCKED;
-				break;
-			case UNAVAILABLE:
-			default:
-				texture_u = TEXTURE_U_UNAVAILABLE;
-				break;
+		if (perkClass.isLocked(p)) {
+			texture_u = TEXTURE_U_UNAVAILABLE;
+		} else {
+			if (isMouseOver(mouseX, mouseY)) {
+				texture_u = TEXTURE_U_HOVERED;
+			} else {
+				texture_u = TEXTURE_U_AVAILABLE;
+			}
 		}
 		
 		DrawableHelper.drawTexture(matrices, x, y, texture_u, TEXTURE_MIN_V, BACKGROUND_TEXTURE_SIZE, BACKGROUND_TEXTURE_SIZE, 256, 256);
@@ -87,28 +78,21 @@ public class ClassButton implements Element, Drawable, Selectable, Hideable, Too
 		DrawableHelper.drawTexture(matrices, x + 4, y + 4, 0, 0, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE, ICON_TEXTURE_SIZE);
 	}
 	
-	private ClassButtonState getState(PlayerEntity p) {
-		
-		if (perkClass.isPurchased(p)) return ClassButtonState.UNLOCKED;
-		
-		if (!perkClass.isLocked(p)) return ClassButtonState.AVAILABLE;
-				
-		return ClassButtonState.UNAVAILABLE;
-		
-	}
-	
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (isMouseOver(mouseX, mouseY) && !hidden) {
-			LibMod.ILog("Clicked on class "+perkClass.getID().toString());
+		
+		MinecraftClient mc = MinecraftClient.getInstance();
+		if (isMouseOver(mouseX, mouseY) && !hidden && !perkClass.isLocked(mc.player)) {
+			if (button == 0) {
+				PlayerPerkData.of(mc.player).unlockClass(perkClass);
+				this.setVisible(false);
+				return true;
+			}
 		}
+		
 		return false;
 	}
 	
-	public static enum ClassButtonState {
-		UNAVAILABLE, AVAILABLE, UNLOCKED 
-	}
-
 	@Override
 	public void appendNarrations(NarrationMessageBuilder var1) {
 		
@@ -131,7 +115,22 @@ public class ClassButton implements Element, Drawable, Selectable, Hideable, Too
 
 	@Override
 	public List<OrderedText> getTooltip() {
-		return Lists.newArrayList(this.perkClass.getText().asOrderedText());
+		return Lists.newArrayList(
+				Text.translatable("perkmastery.unlock_class.message").formatted(Formatting.GOLD).asOrderedText(),
+				Text.literal("").asOrderedText(),
+				Text.translatable("perkmastery.unlock_class.cost", "3").formatted(Formatting.GREEN).asOrderedText()
+			);
 	}
 
+	@Override
+	public void setVisible(boolean visible) {
+		this.hidden = !visible;
+	}
+
+	public void setPerkClass(PerkClass perkClass) {
+		this.perkClass = perkClass;
+		if (perkClass.isPurchased(MinecraftClient.getInstance().player)) {
+			this.setVisible(false);
+		}
+	}
 }

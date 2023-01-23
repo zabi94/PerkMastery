@@ -2,12 +2,14 @@ package dev.zabi94.perkmastery.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import dev.zabi94.perkmastery.entity.player.PlayerPerkData;
 import dev.zabi94.perkmastery.perks.PerkClass;
 import dev.zabi94.perkmastery.perks.PlayerClasses;
 import dev.zabi94.perkmastery.screen.LevellingScreenHandler;
 import dev.zabi94.perkmastery.utils.LibMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Element;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -39,9 +41,11 @@ public class LevellingScreen extends HandledScreen<LevellingScreenHandler> {
     		this.addDrawableChild(new LevelButton(i));
     	}
     	
+		this.addDrawableChild(new ClassPurchaseButton());
+		
     	int j = 0;
     	for (PerkClass perk: PlayerClasses.CLASSES_REGISTRY) {
-    		this.addDrawableChild(new ClassButton(perk, j++));
+    		this.addDrawableChild(new ClassNavigateButton(perk, j++));
     	}
     }
 
@@ -95,16 +99,50 @@ public class LevellingScreen extends HandledScreen<LevellingScreenHandler> {
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		
+		boolean goHomepage = false;
+		
 		if (button == 1) {
-			for (Element e:this.children()) {
-				if (e instanceof Hideable h) {
-					h.toggleHide();
-				}
-			}
-			return false;
+			goHomepage = true;
 		}
 
+		if (button == 2 && Screen.hasControlDown()) {
+			PlayerPerkData.of(MinecraftClient.getInstance().player).reset();
+			goHomepage = true;
+		}
+		
+		if (goHomepage) {
+			for (Element e:this.children()) {
+				if (e instanceof ClassNavigateButton cb) {
+					cb.setVisible(true);
+				} else if (e instanceof LevelButton lb) {
+					lb.setVisible(false);
+				} else if (e instanceof ClassPurchaseButton cp) {
+					cp.setVisible(false);
+				}
+			}
+			
+			return true;
+		}
+		
 		return super.mouseClicked(mouseX, mouseY, button);
+	}
+
+	public void setPerkClass(PerkClass perkClass) {
+		for (Element e:this.children()) {
+			if (e instanceof LevelButton lb) {
+				lb.setPerkClass(perkClass);
+				if (lb.getLevel() != null) {
+					lb.setVisible(true);
+				} else {
+					lb.setVisible(false);
+				}
+			} else if (e instanceof ClassNavigateButton cb) {
+				cb.setVisible(false);
+			} else if (e instanceof ClassPurchaseButton cp) {
+				cp.setPerkClass(perkClass);
+				cp.setVisible(!perkClass.isPurchased(MinecraftClient.getInstance().player));
+			}
+		}
 	}
 	
 }
